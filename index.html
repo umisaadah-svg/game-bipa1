@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Sahabat Nusantara - BIPA 1 (10 Soal per Unit)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        #game-container {
+            background: white;
+            width: 100%;
+            max-width: 850px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            font-size: 1.1rem;
+        }
+        #score-board {
+            background: #27ae60;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        #game-screen {
+            padding: 25px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .level-card {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 5px solid #3498db;
+        }
+        .level-card:hover {
+            background: #e2e8f0;
+            transform: translateX(3px);
+        }
+        .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: bold;
+        }
+        .dialogue-box {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+        .culture-box {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            font-size: 0.88rem;
+            color: #92400e;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        button.btn-option {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.98rem;
+            text-align: left;
+            transition: background 0.2s;
+        }
+        button.btn-option:hover {
+            background-color: #2980b9;
+        }
+        button.btn-option:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        button.btn-nav {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button.btn-next {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .correct { background: #dcfce7; color: #166534; }
+        .wrong { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <header>
+        <h1>🎮 Petualangan Sahabat Nusantara (BIPA 1)</h1>
+        <div id="score-board">Total Skor: <span id="score">0</span></div>
+    </header>
+
+    <div id="game-screen">
+        <!-- Konten Diisi JavaScript -->
+    </div>
+</div>
+
+<script>
+// Data 10 Unit dengan Masing-Masing 10 Pertanyaan
+const unitsData = [
+    {
+        unit: 1,
+        title: "Unit 1: Salam",
+        culture: "💡 Wawasan Budaya: Di Indonesia, sapaan disesuaikan dengan waktu dan salam keagamaan umum digunakan.",
+        questions: [
+            { dialogue: "Anda bertemu teman pada pukul 07.00 pagi. Apa sapaan yang tepat?", options: [{text:"Selamat pagi", correct:true}, {text:"Selamat malam", correct:false}, {text:"Selamat tidur", correct:false}] },
+            { dialogue: "Seseorang menyapa Anda: 'Apa kabar?' Jawaban yang tepat adalah...", options: [{text:"Saya baik-baik saja / Kabar baik", correct:true}, {text:"Selamat siang", correct:false}, {text:"Sampai jumpa", correct:false}] },
+            { dialogue: "Anda hendak berpisah dengan teman di sore hari. Apa ungkapan perpisahan yang tepat?", options: [{text:"Sampai jumpa!", correct:true}, {text:"Selamat datang!", correct:false}, {text:"Halo!", correct:false}] },
+            { dialogue: "Pukul 13.00 siang adalah waktu untuk menyapa dengan...", options: [{text:"Selamat siang", correct:true}, {text:"Selamat sore", correct:false}, {text:"Selamat pagi", correct:false}] },
+            { dialogue: "Sapaan 'Selamat malam' digunakan pada pukul...", options: [{text:"19.00", correct:true}, {text:"10.00", correct:false}, {text:"14.00", correct:false}] },
+            { dialogue: "Jika teman Anda mengucapkan 'Terima kasih', Anda menjawab...", options: [{text:"Sama-sama", correct:true}, {text:"Maaf", correct:false}, {text:"Permisi", correct:false}] },
+            { dialogue: "Bagaimana menyapa guru atau dosen laki-laki secara santun?", options: [{text:"Selamat pagi, Pak.", correct:true}, {text:"Selamat pagi, Bro.", correct:false}, {text:"Halo, Kamu.", correct:false}] },
+            { dialogue: "Ungkapan 'Selamat datang' diucapkan untuk...", options: [{text:"Menyambut tamu yang baru tiba", correct:true}, {text:"Berpisah dengan teman", correct:false}, {text:"Sebelum tidur", correct:false}] },
+            { dialogue: "Pukul 16.00 WIB menyapa orang dengan...", options: [{text:"Selamat sore", correct:true}, {text:"Selamat pagi", correct:false}, {text:"Selamat siang", correct:false}] },
+            { dialogue: "Saat Anda secara tidak sengaja menyenggol seseorang, Anda mengucapkan...", options: [{text:"Maaf", correct:true}, {text:"Terima kasih", correct:false}, {text:"Kabar baik", correct:false}] }
+        ]
+    },
+    {
+        unit: 2,
+        title: "Unit 2: Perkenalan Ni Luh",
+        culture: "💡 Wawasan Budaya: Berjabat tangan dan bersikap ramah adalah etika umum saat berkenalan di Indonesia.",
+        questions: [
+            { dialogue: "Pertanyaan untuk menanyakan nama seseorang yang benar adalah...", options: [{text:"Siapa nama Anda?", correct:true}, {text:"Apa nama kamu?", correct:false}, {text:"Siapa kamu asal?", correct:false}] },
+            { dialogue: "Lengkapi: 'Nama ______ John, saya dari Inggris.'", options: [{text:"saya", correct:true}, {text:"kamu", correct:false}, {text:"mereka", correct:false}] },
+            { dialogue: "Bagaimana cara menanyakan asal negara seseorang?", options: [{text:"Dari mana asal Anda?", correct:true}, {text:"Ke mana Anda pergi?", correct:false}, {text:"Di mana tempat tinggal?", correct:false}] },
+            { dialogue: "Lengkapi: 'Ni Luh berasal ______ Bali.'", options: [{text:"dari", correct:true}, {text:"ke", correct:false}, {text:"di", correct:false}] },
+            { dialogue: "Jawaban dari 'Siapa nama Anda?' adalah...", options: [{text:"Nama saya Meli.", correct:true}, {text:"Saya dari Jepang.", correct:false}, {text:"Umur saya 20 tahun.", correct:false}] },
+            { dialogue: "Susun kata berikut menjadi kalimat benar: [ berasal / Korea / Saya / dari ]", options: [{text:"Saya berasal dari Korea.", correct:true}, {text:"Dari Korea saya berasal.", correct:false}, {text:"Saya Korea berasal dari.", correct:false}] },
+            { dialogue: "Kata ganti orang pertama tunggal formal adalah...", options: [{text:"Saya", correct:true}, {text:"Kamu", correct:false}, {text:"Dia", correct:false}] },
+            { dialogue: "Kata 'Beliau' digunakan untuk menyebut kata ganti orang ketiga yang...", options: [{text:"Dihormati / Lebih tua", correct:true}, {text:"Anak-anak", correct:false}, {text:"Benda mati", correct:false}] },
+            { dialogue: "Lengkapi dialog: 'Senang berkenalan dengan Anda.' -> '______'", options: [{text:"Senang berkenalan dengan Anda juga.", correct:true}, {text:"Selamat jalan.", correct:false}, {text:"Saya tinggal di Jakarta.", correct:false}] },
+            { dialogue: "Negara tempat tinggal Anda disebut...", options: [{text:"Kewarganegaraan / Asal negara", correct:true}, {text:"Alamat rumah", correct:false}, {text:"Hobi", correct:false}] }
+        ]
+    },
+    {
+        unit: 3,
+        title: "Unit 3: Keluargaku",
+        culture: "💡 Wawasan Budaya: Sapaan kekeluargaan seperti Pak, Bu, Mas, Mbak umum dipakai untuk orang lain.",
+        questions: [
+            { dialogue: "Kata ganti kepemilikan ringkas untuk 'rumah saya' adalah...", options: [{text:"Rumahku", correct:true}, {text:"Rumahmu", correct:false}, {text:"Rumahnyo", correct:false}] },
+            { dialogue: "Sapaan hormat untuk wanita yang lebih tua atau ibu teman adalah...", options: [{text:"Ibu / Bu", correct:true}, {text:"Mbak", correct:false}, {text:"Adik", correct:false}] },
+            { dialogue: "Anak laki-laki dari orang tua kita disebut...", options: [{text:"Saudara laki-laki / Kakak / Adik", correct:true}, {text:"Paman", correct:false}, {text:"Kakek", correct:false}] },
+            { dialogue: "Bapak dari ayah atau ibu kita dinamakan...", options: [{text:"Kakek", correct:true}, {text:"Paman", correct:false}, {text:"Ayah", correct:false}] },
+            { dialogue: "Sapaan santun untuk pemuda / laki-laki lebih tua di Jawa adalah...", options: [{text:"Mas", correct:true}, {text:"Uda", correct:false}, {text:"Bli", correct:false}] },
+            { dialogue: "Kata tunjuk posisi dekat adalah...", options: [{text:"Ini", correct:true}, {text:"Itu", correct:false}, {text:"Sana", correct:false}] },
+            { dialogue: "Lengkapi: 'Ini adalah foto keluarga______ (milik saya).'", options: [{text:"ku", correct:true}, {text:"mu", correct:false}, {text:"nya", correct:false}] },
+            { dialogue: "Ibu dari ayah kita disebut...", options: [{text:"Nenek", correct:true}, {text:"Bibi", correct:false}, {text:"Kakak", correct:false}] },
+            { dialogue: "Sapaan untuk laki-laki muda di Sumatera Barat adalah...", options: [{text:"Uda", correct:true}, {text:"Bli", correct:false}, {text:"Mas", correct:false}] },
+            { dialogue: "Kata tunjuk posisi jauh adalah...", options: [{text:"Itu", correct:true}, {text:"Ini", correct:false}, {text:"Sini", correct:false}] }
+        ]
+    },
+    {
+        unit: 4,
+        title: "Unit 4: Ulang Tahunku",
+        dialogue: "",
+        culture: "💡 Wawasan Budaya: Memahami angka kardinal dan ordinal serta menyebutkan tanggal lahir.",
+        questions: [
+            { dialogue: "Bagaimana menyebutkan angka '15' dalam bahasa Indonesia?", options: [{text:"Lima belas", correct:true}, {text:"Lima puluh", correct:false}, {text:"Satu lima", correct:false}] },
+            { dialogue: "Kata tanya untuk menanyakan waktu adalah...", options: [{text:"Kapan", correct:true}, {text:"Di mana", correct:false}, {text:"Siapa", correct:false}] },
+            { dialogue: "Bulan ke-10 dalam kalender adalah...", options: [{text:"Oktober", correct:true}, {text:"Agustus", correct:false}, {text:"Desember", correct:false}] },
+            { dialogue: "Angka '25' dibaca...", options: [{text:"Dua puluh lima", correct:true}, {text:"Dua belas lima", correct:false}, {text:"Dua lima", correct:false}] },
+            { dialogue: "Lengkapi: 'Saya lahir ______ tanggal 10 Mei.'", options: [{text:"pada", correct:true}, {text:"ke", correct:false}, {text:"dari", correct:false}] },
+            { dialogue: "Urutan 'ke-1' dibaca...", options: [{text:"Kesatu / Pertama", correct:true}, {text:"Satu-ke", correct:false}, {text:"Awal", correct:false}] },
+            { dialogue: "Bagaimana menanyakan umur seseorang secara sopan?", options: [{text:"Berapa umur Anda?", correct:true}, {text:"Kapan umur kamu?", correct:false}, {text:"Mengapa umur Anda?", correct:false}] },
+            { dialogue: "Hari sebelum hari Selasa adalah...", options: [{text:"Senin", correct:true}, {text:"Rabu", correct:false}, {text:"Minggu", correct:false}] },
+            { dialogue: "Angka '100' dibaca...", options: [{text:"Seratus", correct:true}, {text:"Satu puluh", correct:false}, {text:"Satu ribu", correct:false}] },
+            { dialogue: "Bulan setelah bulan Juli adalah...", options: [{text:"Agustus", correct:true}, {text:"Juni", correct:false}, {text:"September", correct:false}] }
+        ]
+    },
+    {
+        unit: 5,
+        title: "Unit 5: Liburanku",
+        dialogue: "",
+        culture: "💡 Wawasan Budaya: Penggunaan imbuhan ber- dan frasa santun dalam perjalanan wisata.",
+        questions: [
+            { dialogue: "Kata dasar 'wisata' jika diberi imbuhan 'ber-' menjadi...", options: [{text:"Berwisata", correct:true}, {text:"Memwisata", correct:false}, {text:"Diwisata", correct:false}] },
+            { dialogue: "Frasa santun sebelum memanggil atau bertanya kepada orang asing adalah...", options: [{text:"Permisi", correct:true}, {text:"Hei", correct:false}, {text:"Ayo", correct:false}] },
+            { dialogue: "Tempat menyimpan dan melihat benda-benda sejarah disebut...", options: [{text:"Museum", correct:true}, {text:"Pasar", correct:false}, {text:"Stasiun", correct:false}] },
+            { dialogue: "Lengkapi: 'Kami ingin ______ (jalan) di pantai.'", options: [{text:"berjalan-jalan", correct:true}, {text:"penjalan", correct:false}, {text:"dijalan", correct:false}] },
+            { dialogue: "Apa yang Anda katakan setelah mendapat bantuan dari petugas?", options: [{text:"Terima kasih", correct:true}, {text:"Sama-sama", correct:false}, {text:"Maaf", correct:false}] },
+            { dialogue: "Kata kerja 'foto' dengan imbuhan 'ber-' menjadi...", options: [{text:"Berfoto", correct:true}, {text:"Memfoto", correct:false}, {text:"Terfoto", correct:false}] },
+            { dialogue: "Tempat pemberhentian kereta api adalah...", options: [{text:"Stasiun", correct:true}, {text:"Bandara", correct:false}, {text:"Pelabuhan", correct:false}] },
+            { dialogue: "Wisata menikmati pemandangan alam seperti gunung dan laut disebut...", options: [{text:"Wisata alam", correct:true}, {text:"Wisata belanja", correct:false}, {text:"Wisata kuliner", correct:false}] },
+            { dialogue: "Lengkapi: 'Saya mau ______ tiket bus ke Jogja.'", options: [{text:"membeli", correct:true}, {text:"menjual", correct:false}, {text:"meminta", correct:false}] },
+            { dialogue: "Tempat pemberhentian pesawat terbang dinamakan...", options: [{text:"Bandara / Bandar Udara", correct:true}, {text:"Terminal", correct:false}, {text:"Halte", correct:false}] }
+        ]
+    },
+    {
+        unit: 6,
+        title: "Unit 6: Aktivitas Harianku",
+        dialogue: "",
+        culture: "💡 Wawasan Budaya: Penggunaan imbuhan meng- dan penanda aspek waktu (sudah, sedang, belum).",
+        questions: [
+            { dialogue: "Kata 'makan' dengan penanda aspek kegiatan yang telah selesai adalah...", options: [{text:"Sudah makan", correct:true}, {text:"Sedang makan", correct:false}, {text:"Belum makan", correct:false}] },
+            { dialogue: "Kata dasar 'baca' dengan imbuhan 'meng-' menjadi...", options: [{text:"Membaca", correct:true}, {text:"Mengbaca", correct:false}, {text:"Menbaca", correct:false}] },
+            { dialogue: "Aktivitas membersihkan badan dengan air disebut...", options: [{text:"Mandi", correct:true}, {text:"Makan", correct:false}, {text:"Tidur", correct:false}] },
+            { dialogue: "Penanda aspek untuk kegiatan yang sedang berlangsung adalah...", options: [{text:"Sedang", correct:true}, {text:"Sudah", correct:false}, {text:"Akan", correct:false}] },
+            { dialogue: "Kata dasar 'tulis' dengan imbuhan 'meng-' menjadi...", options: [{text:"Menulis", correct:true}, {text:"Mengtulis", correct:false}, {text:"Memtulis", correct:false}] },
+            { dialogue: "Lengkapi: 'Saya ______ (belum/sudah) makan, jadi perut saya terasa lapar.'", options: [{text:"belum", correct:true}, {text:"sudah", correct:false}, {text:"sedang", correct:false}] },
+            { dialogue: "Aktivitas malam hari di atas kasur adalah...", options: [{text:"Tidur", correct:true}, {text:"Bekerja", correct:false}, {text:"Belajar", correct:false}] },
+            { dialogue: "Kata dasar 'dengar' dengan imbuhan 'meng-' menjadi...", options: [{text:"Mendengar", correct:true}, {text:"Memdengar", correct:false}, {text:"Menydengar", correct:false}] },
+            { dialogue: "Makan pada pagi hari disebut...", options: [{text:"Sarapan", correct:true}, {text:"Makan siang", correct:false}, {text:"Makan malam", correct:false}] },
+            { dialogue: "Penanda aspek untuk rencana kegiatan di masa depan adalah...", options: [{text:"Akan", correct:true}, {text:"Sudah", correct:false}, {text:"Pernah", correct:false}] }
+        ]
+    },
+    {
+        unit: 7,
+        title: "Unit 7: Hobi Kami",
+        dialogue: "",
+        culture: "💡 Wawasan Budaya: Mengungkapkan tingkat kesukaan dan mengenal permainan tradisional Indonesia.",
+        questions: [
+            { dialogue: "Ungkapan untuk menyatakan rasa amat menyukai suatu hobi adalah...", options: [{text:"Sangat suka", correct:true}, {text:"Kurang suka", correct:false}, {text:"Tidak suka", correct:false}] },
+            { dialogue: "Kata 'masak' dengan suffix/akhiran '-an' menjadi kata benda...", options: [{text:"Masakan", correct:true}, {text:"Masak-masak", correct:false}, {text:"Pemasak", correct:false}] },
+            { dialogue: "Hobi yang berhubungan dengan instrumen musik gitar adalah...", options: [{text:"Bermain gitar", correct:true}, {text:"Membaca buku", correct:false}, {text:"Memasak", correct:false}] },
+            { dialogue: "Antonim / lawan kata dari 'suka' adalah...", options: [{text:"Benci / Tidak suka", correct:true}, {text:"Cinta", correct:false}, {text:"Senang", correct:false}] },
+            { dialogue: "Bambu Gila adalah contoh permainan tradisional dari daerah...", options: [{text:"Maluku", correct:true}, {text:"Bali", correct:false}, {text:"Aceh", correct:false}] },
+            { dialogue: "Lengkapi: 'Hobi saya adalah ______ lagu Indonesia.'", options: [{text:"menyanyikan / menyanyi", correct:true}, {text:"menuliskan", correct:false}, {text:"memasak", correct:false}] },
+            { dialogue: "Kata 'tulis' jika diberi akhiran '-an' menjadi...", options: [{text:"Tulisan", correct:true}, {text:"Penulis", correct:false}, {text:"Bertulis", correct:false}] },
+            { dialogue: "Lengkapi: 'Saya ______ suka olahraga karena membuat lelah, saya lebih suka membaca.'", options: [{text:"kurang / tidak", correct:true}, {text:"sangat", correct:false}, {text:"amat", correct:false}] },
+            { dialogue: "Hobi berenang dilakukan di...", options: [{text:"Kolam renang / Pantai", correct:true}, {text:"Lapangan sepak bola", correct:false}, {text:"Perpustakaan", correct:false}] },
+            { dialogue: "Aktivitas membuat gambar dengan pensil warna disebut...", options: [{text:"Melukis / Menggambar", correct:true}, {text:"Menari", correct:false}, {text:"Berlari", correct:false}] }
+        ]
+    },
+    {
+        unit: 8,
+        title: "Unit 8: Sifat-Sifat Temanku",
+        dialogue: "",
+        culture: "💡 Wawasan Budaya: Penggunaan kata negasi 'bukan' (kata benda) vs 'tidak' (kata sifat/kerja).",
+        questions: [
+            { dialogue: "Gunakan kata negasi yang tepat: 'Dia ______ ramah.'", options: [{text:"tidak", correct:true}, {text:"bukan", correct:false}, {text:"belum", correct:false}] },
+            { dialogue: "Gunakan kata negasi yang tepat: 'Ini ______ buku saya.'", options: [{text:"bukan", correct:true}, {text:"tidak", correct:false}, {text:"jangan", correct:false}] },
+            { dialogue: "Orang yang suka menolong orang lain memiliki sifat...", options: [{text:"Baik / Baik hati", correct:true}, {text:"Sombong", correct:false}, {text:"Galak", correct:false}] },
+            { dialogue: "Lawan kata dari 'rajin' adalah...", options: [{text:"Malas", correct:true}, {text:"Pintar", correct:false}, {text:"Pemberani", correct:false}] },
+            { dialogue: "Lawan kata dari 'tinggi' untuk ukuran tubuh adalah...", options: [{text:"Pendek", correct:true}, {text:"Kecil", correct:false}, {text:"Rendah", correct:false}] },
+            { dialogue: "Lengkapi: 'Meli ______ seorang mahasiswa, dia adalah dosen.'", options: [{text:"bukan", correct:true}, {text:"tidak", correct:false}, {text:"tanpa", correct:false}] },
+            { dialogue: "Orang yang sering tersenyum dan menyapa dipanggil orang yang...", options: [{text:"Ramah", correct:true}, {text:"Pemarah", correct:false}, {text:"Pendiam", correct:false}] },
+            { dialogue: "Gunakan kata negasi: 'Saya ______ bisa berenang.'", options: [{text:"tidak", correct:true}, {text:"bukan", correct:false}, {text:"bukanlah", correct:false}] },
+            { dialogue: "Tradisi salam cium hidung terdapat di daerah...", options: [{text:"Kupang / NTT", correct:true}, {text:"Jakarta", correct:false}, {text:"Sumatera Utara", correct:false}] },
+            { dialogue: "Lawan kata dari 'pintar' atau 'pandai' adalah...", options: [{text:"Bodoh / Kurang pandai", correct:true}, {text:"Cerdas", correct:false}, {text:"Kreatif", correct:false}] }
+        ]
+    },
+    {
+        unit: 9,
+        title: "Unit 9: Arah, Letak, dan Lokasi",
+        dialogue: "",
+        culture: "💡 Wawasan Budaya: Kata depan posisi (di, ke, dari) dan moda transportasi publik MRT.",
+        questions: [
+            { dialogue: "Kata depan untuk menyatakan keberadaan di suatu tempat adalah...", options: [{text:"di", correct:true}, {text:"ke", correct:false}, {text:"dari", correct:false}] },
+            { dialogue: "Kata depan untuk menyatakan tujuan pergerakan adalah...", options: [{text:"ke", correct:true}, {text:"di", correct:false}, {text:"pada", correct:false}] },
+            { dialogue: "Lawan dari 'kiri' adalah...", options: [{text:"Kanan", correct:true}, {text:"Depan", correct:false}, {text:"Atas", correct:false}] },
+            { dialogue: "Arah tempat matahari terbit dinamakan...", options: [{text:"Timur", correct:true}, {text:"Barat", correct:false}, {text:"Selatan", correct:false}] },
+            { dialogue: "Lengkapi: 'Saya berjalan ______ stasiun menuju museum.'", options: [{text:"dari", correct:true}, {text:"di", correct:false}, {text:"ke", correct:false}] },
+            { dialogue: "Moda transportasi cepat berbasis rel di Jakarta adalah...", options: [{text:"MRT", correct:true}, {text:"Becak", correct:false}, {text:"Dokar", correct:false}] },
+            { dialogue: "Posisi benda yang berada di bagian bawah dinamakan...", options: [{text:"Di bawah", correct:true}, {text:"Di atas", correct:false}, {text:"Di samping", correct:false}] },
+            { dialogue: "Kata tanya untuk menanyakan lokasi suatu tempat adalah...", options: [{text:"Di mana", correct:true}, {text:"Ke mana", correct:false}, {text:"Siapa", correct:false}] },
+            { dialogue: "Arah lawan dari 'Utara' adalah...", options: [{text:"Selatan", correct:true}, {text:"Barat", correct:false}, {text:"Timur", correct:false}] },
+            { dialogue: "Posisi di antara dua bangunan dinamakan berada...", options: [{text:"Di tengah / Di antara", correct:true}, {text:"Di depan", correct:false}, {text:"Di belakang", correct:false}] }
+        ]
+    },
+    {
+        unit: 10,
+        title: "Unit 10: Pengalaman Meli",
+        dialogue: "",
+        culture: "💡 Wawasan Budaya: Menyusun paragraf cerita pengalaman sederhana berpola S-P-Pel.",
+        questions: [
+            { dialogue: "Struktur kalimat dasar 'Meli membeli oleh-oleh' adalah...", options: [{text:"Subjek - Predikat - Objek", correct:true}, {text:"Predikat - Subjek", correct:false}, {text:"Keterangan - Subjek", correct:false}] },
+            { dialogue: "Kata keterangan waktu untuk pengalaman masa lalu adalah...", options: [{text:"Minggu lalu / Kemarin", correct:true}, {text:"Besok", correct:false}, {text:"Lusa", correct:false}] },
+            { dialogue: "Lengkapi: 'Kemarin kami ______ pantai di Bali.'", options: [{text:"mengunjungi / pergi ke", correct:true}, {text:"akan pergi", correct:false}, {text:"menjual", correct:false}] },
+            { dialogue: "Kalimat cerita pengalaman: 'John sangat senang karena...' lengkapnya...", options: [{text:"liburannya menyenangkan.", correct:true}, {text:"dia akan pergi besok.", correct:false}, {text:"dia belum datang.", correct:false}] },
+            { dialogue: "Suku di Indonesia yang terkenal memiliki mata berwarna biru terdapat di...", options: [{text:"Lamno (Aceh) / Sulawesi", correct:true}, {text:"Jawa Tengah", correct:false}, {text:"Papua", correct:false}] },
+            { dialogue: "Pengalaman adalah peristiwa yang...", options: [{text:"Pernah dialami di masa lalu", correct:true}, {text:"Belum terjadi", correct:false}, {text:"Sedang diimpikan", correct:false}] },
+            { dialogue: "Susun kalimat: [ sangat / Liburan / menyenangkan / saya ]", options: [{text:"Liburan saya sangat menyenangkan.", correct:true}, {text:"Sangat menyenangkan liburan saya.", correct:false}, {text:"Saya liburan sangat menyenangkan.", correct:false}] },
+            { dialogue: "Kata 'membeli' dalam kalimat 'John membeli souvenir' bertindak sebagai...", options: [{text:"Predikat (Kata Kerja)", correct:true}, {text:"Subjek", correct:false}, {text:"Keterangan", correct:false}] },
+            { dialogue: "Oleh-oleh khas dari daerah yang dikunjungi biasa disebut...", options: [{text:"Cendera mata / Souvenir", correct:true}, {text:"Pakaian dinas", correct:false}, {text:"Tiket bus", correct:false}] },
+            { dialogue: "Bentuk penutup cerita pengalaman yang baik adalah...", options: [{text:"Saya berharap bisa berkunjung lagi ke sana.", correct:true}, {text:"Saya tidak mau tahu.", correct:false}, {text:"Siapa nama Anda?", correct:false}] }
+        ]
+    }
+];
+
+let globalScore = 0;
+let currentUnitIdx = 0;
+let currentQuestionIdx = 0;
+
+function showMainMenu() {
+    const screen = document.getElementById('game-screen');
+    let html = `<h2>Pilih Unit Pembelajaran (10 Soal per Unit):</h2><div class="level-grid">`;
+    
+    unitsData.forEach((u, index) => {
+        html += `
+            <div class="level-card" onclick="startUnit(${index})">
+                <strong>${u.title}</strong>
+                <p style="font-size:0.8rem; color:#64748b; margin-top:5px;">10 Pertanyaan</p>
+            </div>
+        `;
+    });
+    
+    html += `</div>`;
+    screen.innerHTML = html;
+}
+
+function startUnit(unitIdx) {
+    currentUnitIdx = unitIdx;
+    currentQuestionIdx = 0;
+    loadQuestion();
+}
+
+function loadQuestion() {
+    const unit = unitsData[currentUnitIdx];
+    const q = unit.questions[currentQuestionIdx];
+    const screen = document.getElementById('game-screen');
+    
+    let html = `
+        <div class="meta-info">
+            <span>${unit.title}</span>
+            <span>Soal ${currentQuestionIdx + 1} dari 10</span>
+        </div>
+        <div class="culture-box">${unit.culture}</div>
+        <div class="dialogue-box">${q.dialogue}</div>
+        <div class="options-grid">
+    `;
+    
+    q.options.forEach((opt) => {
+        html += `<button class="btn-option" onclick="checkAnswer(${opt.correct})">${opt.text}</button>`;
+    });
+    
+    html += `</div><div id="feedback-area"></div>
+        <div class="nav-actions">
+            <button class="btn-nav" onclick="showMainMenu()">⬅️ Menu Utama</button>
+        </div>`;
+    
+    screen.innerHTML = html;
+}
+
+function checkAnswer(isCorrect) {
+    const feedbackArea = document.getElementById('feedback-area');
+    const buttons = document.querySelectorAll('.btn-option');
+    buttons.forEach(btn => btn.disabled = true);
+    
+    if (isCorrect) {
+        globalScore += 10;
+        document.getElementById('score').innerText = globalScore;
+        feedbackArea.innerHTML = `<div class="feedback correct">🎉 Benar! (+10 Poin)</div>`;
+    } else {
+        feedbackArea.innerHTML = `<div class="feedback wrong">❌ Jawaban kurang tepat.</div>`;
+    }
+    
+    const navActions = document.querySelector('.nav-actions');
+    if (currentQuestionIdx < 9) {
+        navActions.innerHTML += `<button class="btn-next" onclick="nextQuestion()">Pertanyaan Selanjutnya ➡️</button>`;
+    } else {
+        navActions.innerHTML += `<button class="btn-next" onclick="finishUnit()">Selesaikan Unit 🏆</button>`;
+    }
+}
+
+function nextQuestion() {
+    currentQuestionIdx++;
+    loadQuestion();
+}
+
+function finishUnit() {
+    const screen = document.getElementById('game-screen');
+    screen.innerHTML = `
+        <div style="text-align:center; padding: 20px;">
+            <h2>🏆 Selamat!</h2>
+            <p style="margin: 15px 0; font-size: 1.1rem;">Anda telah menyelesaikan <strong>${unitsData[currentUnitIdx].title}</strong>!</p>
+            <p>Total Skor Anda saat ini: <strong>${globalScore}</strong></p>
+            <br>
+            <button class="btn-next" onclick="showMainMenu()">Kembali ke Pilih Unit</button>
+        </div>
+    `;
+}
+
+// Jalankan game saat awal dimuat
+showMainMenu();
+</script>
+</body>
+</html>
